@@ -10,14 +10,24 @@ pub mod position;
 
 #[derive(Serialize, Deserialize)]
 pub struct Player {
-    pub name: String,
-    pub position: Position,
-    pub rating: AttributeQuality
+    name: String,
+    position: Position,
+    rating: AttributeQuality
 }
 
 impl Player {
     pub fn new(name: &str, position: Position, rating: AttributeQuality) -> Player {
         Player { name: name.to_string(), position, rating }
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn position(&self) -> &Position {
+        &self.position
+    }
+    pub fn rating(&self) -> &AttributeQuality {
+        &self.rating
     }
 }
 

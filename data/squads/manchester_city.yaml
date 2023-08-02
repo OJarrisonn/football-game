@@ -1,0 +1,35 @@
+name: Manchester City
+players:
+- name: Ederson
+  position: GK
+  rating: Excelent
+- name: Walker
+  position: DEF
+  rating: Excelent
+- name: Ruben Dias
+  position: DEF
+  rating: Excelent
+- name: Laporte
+  position: DEF
+  rating: Excelent
+- name: Ake
+  position: DEF
+  rating: Good
+- name: De Bruyne
+  position: MF
+  rating: Excelent
+- name: Rodri
+  position: MF
+  rating: Excelent
+- name: Foden
+  position: MF
+  rating: Good
+- name: Bernardo
+  position: FW
+  rating: Excelent
+- name: Haaland
+  position: FW
+  rating: Excelent
+- name: Grealish
+  position: FW
+  rating: Good

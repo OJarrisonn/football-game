@@ -1,5 +1,5 @@
-mod inout;
-mod data;
+pub mod inout;
+pub mod data;
 
 #[cfg(test)]
 mod tests;
