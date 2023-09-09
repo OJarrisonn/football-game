@@ -1,45 +1,39 @@
-use std::{path::Path, fs};
-
-use diysh::{shell::Shell, inout::log::LogLevel};
-
-pub const DATA_PATH: &str = "./data/";
-const LOG_PATH: &str = "./log/";
+use football_game::{data::{player::{Player, PlayerPosition}, attribute::AttributeQuality, squad::Squad}, simulation};
 
 fn main() {
-    let mut shell = Shell::new();
+    let city_players = [
+        Player::new(0, "Ederson", PlayerPosition::GK, AttributeQuality::VH),
+        Player::new(0, "Walker", PlayerPosition::DF, AttributeQuality::VH),
+        Player::new(0, "Ruben Dias", PlayerPosition::DF, AttributeQuality::VH),
+        Player::new(0, "Stones", PlayerPosition::DF, AttributeQuality::VH),
+        Player::new(0, "Ake", PlayerPosition::DF, AttributeQuality::HI),
+        Player::new(0, "De Bruyne", PlayerPosition::MD, AttributeQuality::VH),
+        Player::new(0, "Rodri", PlayerPosition::MD, AttributeQuality::VH),
+        Player::new(0, "Foden", PlayerPosition::MD, AttributeQuality::HI),
+        Player::new(0, "Bernardo", PlayerPosition::FW, AttributeQuality::VH),
+        Player::new(0, "Haaland", PlayerPosition::FW, AttributeQuality::VH),
+        Player::new(0, "Grealish", PlayerPosition::FW, AttributeQuality::HI),
+    ];
+    let city = Squad::new(0, "Manchester City", city_players);
 
-    setup(&mut shell);
+    let barca_players = [
+        Player::new(0, "Ter Stegen", PlayerPosition::GK, AttributeQuality::VH),
+        Player::new(0, "Cancelo", PlayerPosition::DF, AttributeQuality::VH),
+        Player::new(0, "Araújo", PlayerPosition::DF, AttributeQuality::VH),
+        Player::new(0, "Kounde", PlayerPosition::DF, AttributeQuality::HI),
+        Player::new(0, "Balde", PlayerPosition::DF, AttributeQuality::HI),
+        Player::new(0, "Pedri", PlayerPosition::MD, AttributeQuality::HI),
+        Player::new(0, "De Jong", PlayerPosition::MD, AttributeQuality::HI),
+        Player::new(0, "Gundogan", PlayerPosition::MD, AttributeQuality::VH),
+        Player::new(0, "Raphinha", PlayerPosition::FW, AttributeQuality::HI),
+        Player::new(0, "Lewandowski", PlayerPosition::FW, AttributeQuality::VH),
+        Player::new(0, "Fati", PlayerPosition::FW, AttributeQuality::HI),
+    ];
 
-    println!("Football Game a0");
+    let barca = Squad::new(1, "Barcelona", barca_players);
 
-    loop {
-        shell.read_and_run();
-    }
+    println!("{} x {}", simulation::expected_goals(&city, &barca, simulation::HOME_UNFAV), simulation::expected_goals(&barca, &city, simulation::HOME_FAV));
 }
 
-fn setup(shell: &mut Shell) {
-    shell
-        .set_log_directory(LOG_PATH)
-        .register_help()
-        .register_history()
-        .register_exit()
-        .set_prompt("~$ ")
-        .set_sparse(true);
-
-
-    let data_path = Path::new(DATA_PATH);
-
-    if !data_path.is_dir() {
-        match fs::create_dir(data_path) {
-            Ok(_) => {
-                shell.log(LogLevel::INFO,"Data folder created");
-                let squads_path = String::from(DATA_PATH) + "squads/";
-                match fs::create_dir(Path::new(&squads_path)) {
-                    Ok(_) => shell.log(LogLevel::INFO, "Squads folder created"),
-                    Err(e) => shell.log(LogLevel::ERROR, &format!("Squads folder couldn't be created, due to {}", e)),
-                }
-            },
-            Err(e) => shell.log(LogLevel::ERROR, &format!("Squads folder couldn't be created, due to {}", e)),
-        }
-    }
-}
+#[cfg(test)]
+mod tests;
