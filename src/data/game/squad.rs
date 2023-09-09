@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use serde_derive::{Serialize, Deserialize};
 
-use crate::data::game::player::Player;
+use crate::data::{game::player::Player, GameObject};
 
 #[derive(Serialize, Deserialize)]
 pub struct Squad {
@@ -38,5 +38,15 @@ impl Display for Squad {
                 players_list
             }
         )
+    }
+}
+
+impl GameObject for Squad {
+    fn id(&self) -> String {
+        self.name().to_lowercase().replace(" ", "_")
+    }
+
+    fn path(&self, root: &str) -> String {
+        String::from(root) + &self.id() + ".yaml"
     }
 }

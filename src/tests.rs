@@ -2,7 +2,7 @@ use std::fs::{OpenOptions, File};
 
 use serde_derive::{Serialize, Deserialize};
 
-use crate::data::{util::attribute::AttributeQuality, game::{player::{Player, position::Position}, squad::Squad}};
+use crate::{data::{util::attribute::AttributeQuality, game::{player::{Player, position::Position}, squad::Squad}}, inout};
 
 #[test]
 fn sandbox() {
@@ -61,4 +61,49 @@ fn creating_squad_file() {
     let barca_file = OpenOptions::new().create(true).write(true).open("./data/squads/barcelona.yaml").expect("Folder structure doesn't exists");
 
     serde_yaml::to_writer(barca_file, &barca);
+}
+
+#[test]
+fn serde_test() {
+    let city_players = [
+        Player::new("Ederson", Position::GK, AttributeQuality::Excelent),
+        Player::new("Walker", Position::DEF, AttributeQuality::Excelent),
+        Player::new("Ruben Dias", Position::DEF, AttributeQuality::Excelent),
+        Player::new("Laporte", Position::DEF, AttributeQuality::Excelent),
+        Player::new("Ake", Position::DEF, AttributeQuality::Good),
+        Player::new("De Bruyne", Position::MF, AttributeQuality::Excelent),
+        Player::new("Rodri", Position::MF, AttributeQuality::Excelent),
+        Player::new("Foden", Position::MF, AttributeQuality::Good),
+        Player::new("Bernardo", Position::FW, AttributeQuality::Excelent),
+        Player::new("Haaland", Position::FW, AttributeQuality::Excelent),
+        Player::new("Grealish", Position::FW, AttributeQuality::Good),
+    ];
+    let city = Squad::new("Manchester City", city_players);
+
+    let barca_players = [
+        Player::new("Ter Stegen", Position::GK, AttributeQuality::Excelent),
+        Player::new("Kounde", Position::DEF, AttributeQuality::Excelent),
+        Player::new("Araújo", Position::DEF, AttributeQuality::Excelent),
+        Player::new("Christensen", Position::DEF, AttributeQuality::Good),
+        Player::new("Balde", Position::DEF, AttributeQuality::Good),
+        Player::new("Pedri", Position::MF, AttributeQuality::Good),
+        Player::new("De Jong", Position::MF, AttributeQuality::Good),
+        Player::new("Gundogan", Position::MF, AttributeQuality::Excelent),
+        Player::new("Raphinha", Position::FW, AttributeQuality::Good),
+        Player::new("Lewandowski", Position::FW, AttributeQuality::Excelent),
+        Player::new("Fati", Position::FW, AttributeQuality::Good),
+    ];
+    let barca = Squad::new("Barcelona", barca_players);
+
+
+    match inout::save_yaml("./data/squads/manchester_city.yaml", &city) {
+        Ok(_) => println!("Squad file saved"),
+        Err(e) => panic!("Couldn't save City squad. {}", e),
+    }
+
+    match inout::load_yaml::<Squad>("./data/squads/manchester_city.yaml") {
+        Ok(s) => println!("{}", s),
+        Err(e) => panic!("Couldn't load City squad, {}", e),
+    }
+
 }
