@@ -1,4 +1,4 @@
-use football_game::{data::{player::{Player, PlayerPosition}, attribute::AttributeQuality, squad::Squad}, simulation::{self, calculate_goals}};
+use football_game::{data::{player::{Player, PlayerPosition}, attribute::{AttributeQuality, HomeFactor}, squad::Squad}, simulation::{self, calculate_goals}};
 
 fn main() {
     let city_players = [
@@ -31,14 +31,26 @@ fn main() {
     ];
 
     let barca = Squad::new(1, "Barcelona", barca_players);
-    let expected_goals: (f32, f32) = (simulation::expected_goals(&barca, &city, simulation::HOME_FAV), simulation::expected_goals(&city, &barca, simulation::HOME_UNFAV)); 
-    let entropy: f32 = 1.5;
+    let expected_goals_params: (f32, f32, f32) = (0.6, 1.5, 10.);
+    let expected_goals: (f32, f32) = (simulation::expected_goals(&barca, &city, HomeFactor::new(AttributeQuality::OK), expected_goals_params), simulation::expected_goals(&city, &barca, HomeFactor::new(AttributeQuality::OK), expected_goals_params)); 
+    let entropy: f32 = 1.25;
 
     println!("xG: {} x {}", expected_goals.0, expected_goals.1);
 
-    for _ in 0..10 {
-        println!("BAR {} x {} CIT", calculate_goals(expected_goals.0, entropy), calculate_goals(expected_goals.1, entropy));
+    let mut city_goals = 0;
+    let mut barca_goals = 0;
+
+    for _ in 0..100 {
+        let barca_score = calculate_goals(expected_goals.0, entropy);
+        let city_score = calculate_goals(expected_goals.1, entropy);
+        
+        println!("BAR {barca_score} x {city_score} CIT");
+
+        barca_goals += barca_score;
+        city_goals += city_score;
     }
+
+    println!("Goal avg: BAR {} x {} CIT", (barca_goals as f32) / 100., (city_goals as f32) / 100.);
 }
 
 #[cfg(test)]

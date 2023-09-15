@@ -32,11 +32,24 @@ impl Squad {
         let mut count: i32 = 0;
 
         for player in self.players.iter().filter(filter) {
-            quality += player.quality().as_float();
+            quality += player.quality().as_f32();
             count += 1;
         }
 
         AttributeQuality::from(quality / (count as f32))
+    }
+
+    pub fn quality_of_as_f32<P>(&self, filter: P) -> f32
+    where P: Fn(&&Player) -> bool {
+        let mut quality: f32 = 0.0;
+        let mut count: i32 = 0;
+
+        for player in self.players.iter().filter(filter) {
+            quality += player.quality().as_f32();
+            count += 1;
+        }
+
+        (quality / (count as f32))
     }
 }
 

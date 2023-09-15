@@ -2,7 +2,7 @@ use std::ops::Not;
 
 use serde_derive::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Copy)]
 pub enum AttributeQuality {
     VL, // Very Low
     LO, // Low
@@ -63,7 +63,8 @@ impl Not for AttributeQuality {
     }
 }
 
-struct HomeFactor(AttributeQuality);
+#[derive(Clone, Copy)]
+pub struct HomeFactor(AttributeQuality);
 
 impl HomeFactor {
     pub fn new(attribute_quality: AttributeQuality) -> Self {

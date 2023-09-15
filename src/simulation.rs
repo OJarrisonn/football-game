@@ -1,23 +1,23 @@
 use rand_distr::{Distribution, Normal};
 
-use crate::data::{squad::Squad, player::PlayerPosition};
+use crate::data::{squad::Squad, player::PlayerPosition, attribute::HomeFactor};
 
 /// # expected_goals
 ///  Calculate the expected goals of given attack over a given defense
 /// 
-pub fn expected_goals(attacker: &Squad, defender: &Squad, home_factor: f32) -> f32 {
-    let attack_quality: f32 = attacker.quality_of(|player| {*player.position() == PlayerPosition::FW || *player.position() == PlayerPosition::MD}).as_f32() + 2.; // Ranges from 0 to 4
-    let defense_quality: f32 = defender.quality_of(|player| {*player.position() == PlayerPosition::DF || *player.position() == PlayerPosition::GK}).as_f32() + 2.; 
+pub fn expected_goals(attacker: &Squad, defender: &Squad, home_factor: HomeFactor, (mG, zG, MG): (f32, f32, f32)) -> f32 {
+    let attack_quality: f32 = attacker.quality_of_as_f32(|player| {*player.position() == PlayerPosition::FW || *player.position() == PlayerPosition::MD}) + 2.; // Ranges from 0 to 4
+    let defense_quality: f32 = defender.quality_of_as_f32(|player| {*player.position() == PlayerPosition::DF || *player.position() == PlayerPosition::GK}) + 2.; 
 
-    let delta = attack_quality*attack_quality*home_factor - defense_quality*defense_quality*(1./home_factor); // [-16, 16] the delta quality difference
+    let delta = attack_quality*attack_quality - defense_quality*defense_quality; // [-16, 16] the delta quality difference
     println!("att: {attack_quality}, def: {defense_quality}, delta: {delta}");
 
-    let a = 7. / (2. * 16. * 16.);
-    let b = (1.25 + 7./2.) / 16.;
-    let c = 1.75; 
+    let c = zG; 
+    let a = ((MG + mG) - 2.*zG) / 512.;
+    let b = (mG - zG - 256.*a) / (-16.);
 
     //0.008*delta*delta + 0.21875*delta + 1.5 - 0.048
-    a*delta*delta + b*delta + c
+    (a*delta*delta + b*delta + c) * home_factor.as_f32()
 }
 
 /// # calculate_goals
