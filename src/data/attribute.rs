@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::ops::Not;
 
 use serde_derive::{Serialize, Deserialize};
@@ -62,6 +63,20 @@ impl Not for AttributeQuality {
         self.opposite()
     }
 }
+
+impl Display for AttributeQuality {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Self::VH => "VH",
+            Self::HI => "HI",
+            Self::OK => "OK",
+            Self::LO => "LO",
+            Self::VL => "VL"
+        })
+    }
+}
+
+
 
 #[derive(Clone, Copy)]
 pub struct HomeFactor(AttributeQuality);
